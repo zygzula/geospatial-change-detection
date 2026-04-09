@@ -1,0 +1,34 @@
+# virtual env
+.venv/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# pytest
+.pytest_cache/
+
+# jupyter
+.ipynb_checkpoints/
+
+# ide
+.idea/
+.vscode/
+
+# data
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# outputs
+outputs/figures/*
+outputs/vectors/*
+outputs/reports/*
+outputs/rasters/*
+!outputs/figures/.gitkeep
+!outputs/vectors/.gitkeep
+!outputs/reports/.gitkeep
+!outputs/rasters/.gitkeep

@@ -1,0 +1,15 @@
+geopandas
+planetary-computer
+pystac-client
+stackstac
+xarray
+rioxarray
+matplotlib
+scikit-image
+pandas
+tqdm
+scipy
+
+numpy
+rasterio
+shapely
