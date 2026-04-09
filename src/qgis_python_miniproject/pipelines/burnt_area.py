@@ -8,7 +8,7 @@ from qgis_python_miniproject import config
 from qgis_python_miniproject.core import visualize, vectorize, aoi, fetch, composite, filesystem
 from qgis_python_miniproject.indices import change
 from qgis_python_miniproject.reports import summarize
-from qgis_python_miniproject.indices.ndvi import calculate_ndvi
+from qgis_python_miniproject.indices.nbr import calculate_nbr
 
 
 def _process_period(
@@ -22,7 +22,7 @@ def _process_period(
         verbose: bool = config.VERBOSE
 ) -> xr.DataArray:
     """
-        Compute NDVI for a given timeframe.
+        Compute NBR for a given timeframe.
 
         Args:
             start: Start date in ISO format.
@@ -35,9 +35,9 @@ def _process_period(
             verbose: Verbosity mode.
 
         Returns:
-            xr.DataArray: NDVI raster for the given timeframe.
+            xr.DataArray: NBR raster for the given timeframe.
     """
-    print(f"\nProcessing NDVI for {label} [{start}/{end}]")
+    print(f"\nProcessing NBR for {label} [{start}/{end}]")
 
     # Fetching Sentinel-2 scenes from the API from the desired region within the specified timeframe
     scenes = fetch.search_stac_scenes(bbox=bounds_wgs84.tolist(), datetime=f"{start}/{end}", verbose=verbose)
@@ -50,30 +50,30 @@ def _process_period(
         verbose=verbose
     )
 
-    # Computing the NDVI index
-    ndvi = calculate_ndvi(composite=median_composite, verbose=verbose)
+    # Computing the NBR index
+    nbr = calculate_nbr(composite=median_composite, verbose=verbose)
 
     # Saving the results
     raster_path = config.RASTERS_DIR / f"{filename}.tif"
-    ndvi.rio.to_raster(raster_path)
+    nbr.rio.to_raster(raster_path)
     visualize.save_raster_plot(
-        raster=ndvi,
+        raster=nbr,
         filepath=config.FIGURES_DIR / f"{filename}.png",
-        title=f"NDVI for Rondônia, Brazil ({start} to {end})",
-        cmap=config.NDVI_CMAP,
+        title=f"NBR for Rondônia, Brazil ({start} to {end})",
+        cmap=config.NBR_CMAP,
         verbose=verbose
     )
 
-    return ndvi
+    return nbr
 
 
-def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_DEFORESTATION_AOI_PATH, verbose: bool = config.VERBOSE):
+def run_burnt_area_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_BURNT_AREA_AOI_PATH, verbose: bool = config.VERBOSE):
     """
     Executes the full deforestation pipeline. By default, the analysis is performed on the Rondônia region in Brazil,
     a well-documented deforestation hotspot in the Amazon over recent decades.
     """
 
-    print("Starting deforestation hotspot detection pipeline")
+    print("Starting burnt area hotspot detection pipeline")
 
     # Setting up all the output directories
     filesystem.create_output_directories(verbose=verbose)
@@ -85,53 +85,53 @@ def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_DEFOR
     bounds_wgs84 = aoi_gdf.to_crs("EPSG:4326").total_bounds
     bounds_target_crs, target_crs = aoi.get_aoi_bounds_and_crs(aoi_gdf)
 
-    # Processing NDVI for periods 1 and 2
-    p1_ndvi = _process_period(
-        start=config.DEFORESTATION_PERIOD_1_START,
-        end=config.DEFORESTATION_PERIOD_1_END,
+    # Processing NDB for periods 1 and 2
+    p1_nbr = _process_period(
+        start=config.BURNT_AREA_PERIOD_1_START,
+        end=config.BURNT_AREA_PERIOD_1_END,
         bounds_wgs84=bounds_wgs84,
         bounds_target_crs=bounds_target_crs,
         target_crs=target_crs,
         label="period 1",
-        filename="period1_ndvi",
+        filename="period1_nbr",
         verbose=verbose
     )
-    p2_ndvi = _process_period(
-        start=config.DEFORESTATION_PERIOD_2_START,
-        end=config.DEFORESTATION_PERIOD_2_END,
+    p2_nbr = _process_period(
+        start=config.BURNT_AREA_PERIOD_2_START,
+        end=config.BURNT_AREA_PERIOD_2_END,
         bounds_wgs84=bounds_wgs84,
         bounds_target_crs=bounds_target_crs,
         target_crs=target_crs,
         label="period 2",
-        filename="period2_ndvi",
+        filename="period2_nbr",
         verbose=verbose
     )
 
     print("\nPerforming vegetation loss detection")
 
-    ndvi_diff = change.calculate_ndvi_change(p1_ndvi=p1_ndvi, p2_ndvi=p2_ndvi, verbose=verbose)
-    hotspot_mask = change.detect_vegetation_loss(p1_ndvi=p1_ndvi, ndvi_diff=ndvi_diff, verbose=verbose)
+    nbr_diff = change.calculate_nbr_change(p1_nbr=p1_nbr, p2_nbr=p2_nbr, verbose=verbose)
+    burnt_area_hotspot_mask = change.detect_burnt_area(p1_nbr=p1_nbr, nbr_diff=nbr_diff, verbose=verbose)
 
     # Saving the analysis results
-    change_raster_path = config.RASTERS_DIR / "ndvi_change.tif"
-    ndvi_diff.rio.to_raster(change_raster_path)
-    mask_raster_path = config.RASTERS_DIR / "hotspot_mask.tif"
-    hotspot_mask.rio.to_raster(mask_raster_path, dtype="uint8")
+    change_raster_path = config.RASTERS_DIR / "nbr_change.tif"
+    nbr_diff.rio.to_raster(change_raster_path)
+    mask_raster_path = config.RASTERS_DIR / "burnt_area_hotspot_mask.tif"
+    burnt_area_hotspot_mask.rio.to_raster(mask_raster_path, dtype="uint8")
 
     visualize.save_raster_plot(
-        raster=ndvi_diff,
-        filepath=config.FIGURES_DIR / "ndvi_change.png",
-        title=f"NDVI Change for Rondônia, Brazil (Period 2 - Period 1)",
-        cmap=config.NDVI_CHANGE_CMAP
+        raster=nbr_diff,
+        filepath=config.FIGURES_DIR / "nbr_change.png",
+        title=f"NBR Change for Rondônia, Brazil (Period 2 - Period 1)",
+        cmap=config.NBR_CHANGE_CMAP
     )
 
     print("\nVectorizing and cleaning hotspots")
 
-    hotspots_raw = vectorize.vectorize_raster(hotspot_mask)
+    hotspots_raw = vectorize.vectorize_raster(burnt_area_hotspot_mask)
     hotspots_clean = vectorize.clean_hotspots(hotspots_raw)
 
     # Saving the hotspots after noise filtering
-    hotspots_path = config.VECTORS_DIR / "deforestation_hotspots.geojson"
+    hotspots_path = config.VECTORS_DIR / "burnt_area_hotspots.geojson"
     hotspots_clean.to_file(hotspots_path, driver="GeoJSON")
     print(f"Saved cleaned hotspots to: {hotspots_path}")
 
@@ -148,12 +148,12 @@ def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_DEFOR
     print("\nSummary:")
     print(summary_df.to_string())
 
-    # Visualizing the detected hotspots over the NDVI raster
+    # Visualizing the detected hotspots over the NBR raster
     visualize.save_hotspot_overlay_plot(
-        raster=ndvi_diff,
+        raster=nbr_diff,
         hotspots=hotspots_clean,
-        filepath=config.FIGURES_DIR / "hotspot_overlay.png",
-        title="Deforestation Hotspots on NDVI Change",
+        filepath=config.FIGURES_DIR / "burnt_area_hotspot_overlay.png",
+        title="Burnt Area Hotspots on NBR Change",
     )
 
     print("\nPipeline execution complete.")
