@@ -1,7 +1,7 @@
 import numpy as np
 import xarray as xr
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def calculate_ndvi(composite: xr.DataArray, verbose: bool = config.VERBOSE) -> xr.DataArray:

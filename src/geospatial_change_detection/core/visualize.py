@@ -11,7 +11,7 @@ import xarray as xr
 import geopandas as gpd
 from pathlib import Path
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def _visualise_the_plot(

@@ -4,11 +4,11 @@ from typing import Union
 import xarray as xr
 from numpy import ndarray, dtype, float64
 
-from qgis_python_miniproject import config
-from qgis_python_miniproject.core import visualize, vectorize, aoi, fetch, composite, filesystem
-from qgis_python_miniproject.indices import change
-from qgis_python_miniproject.reports import summarize
-from qgis_python_miniproject.indices.nbr import calculate_nbr
+from geospatial_change_detection import config
+from geospatial_change_detection.core import visualize, vectorize, aoi, fetch, composite, filesystem
+from geospatial_change_detection.indices import change
+from geospatial_change_detection.reports import summarize
+from geospatial_change_detection.indices.nbr import calculate_nbr
 
 
 def _process_period(

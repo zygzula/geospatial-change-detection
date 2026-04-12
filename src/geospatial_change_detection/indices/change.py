@@ -1,7 +1,7 @@
 import numpy as np
 import xarray as xr
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def calculate_ndvi_change(
@@ -119,12 +119,12 @@ def detect_burnt_area(
     # Creating the initial vegetation mask to investigate if the initial NBR was high enough to say that there
     # was some vegetation in a place in the first place. I there was no vegetation initially then we cannot call it
     # a vegetation loss
-    is_initial_vegetation_sufficient = p1_nbr_aligned > config.MINIMUM_PRE_VEGETATION_NDVI_THRESHOLD
+    is_initial_vegetation_sufficient = p1_nbr_aligned > config.MINIMUM_PRE_VEGETATION_NBR_THRESHOLD
 
-    # Creating the significant loss mask to investigate if the NBR decrease is _smaller_ than the predefined minimum change threshold
-    is_loss_significant = nbr_diff_aligned < config.MINIMUM_NDVI_CHANGE_THRESHOLD
+    # Creating the significant burn mask
+    is_burn_significant = nbr_diff_aligned > config.MINIMUM_DNBR_THRESHOLD
 
-    burnt_area_hotspot_mask = (is_initial_vegetation_sufficient & is_loss_significant).astype(np.uint8)
+    burnt_area_hotspot_mask = (is_initial_vegetation_sufficient & is_burn_significant).astype(np.uint8)
     burnt_area_hotspot_mask = burnt_area_hotspot_mask.rename("burnt_area_hotspot_mask")
 
     print("Burnt area hotspot detection complete.")

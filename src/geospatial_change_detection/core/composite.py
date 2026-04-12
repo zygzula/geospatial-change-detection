@@ -4,7 +4,7 @@ import rioxarray
 import stackstac
 import xarray as xr
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def create_median_composite(

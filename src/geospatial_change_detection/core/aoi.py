@@ -6,7 +6,7 @@ from typing import Union
 
 import geopandas as gpd
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def load_aoi(aoi_path: Union[str, Path], verbose: bool = config.VERBOSE) -> gpd.GeoDataFrame:
