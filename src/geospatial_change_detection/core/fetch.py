@@ -6,7 +6,7 @@ from pystac_client.item_search import (
     BBoxLike, DatetimeLike
 )
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def search_stac_scenes(

@@ -6,10 +6,10 @@ from typing import Union
 
 import geopandas as gpd
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
-def load_aoi(aoi_path: Union[str, Path] = config.DEFAULT_AOI_PATH, verbose: bool = config.VERBOSE) -> gpd.GeoDataFrame:
+def load_aoi(aoi_path: Union[str, Path], verbose: bool = config.VERBOSE) -> gpd.GeoDataFrame:
     """
     Loads an Area of Interest (AOI) from a vector file.
 

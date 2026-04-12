@@ -4,7 +4,7 @@ import rioxarray
 import stackstac
 import xarray as xr
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def create_median_composite(
@@ -35,7 +35,7 @@ def create_median_composite(
     # Creating the stack with all the parameters adjusted to the further analysis
     stack = stackstac.stack(
         scenes_dict["features"],
-        assets=config.ASSET_KEYS,
+        assets=config.DEFORESTATION_ASSET_KEYS,
         resolution=10,
         bounds=tuple(bbox),
         epsg=target_crs,
@@ -46,7 +46,7 @@ def create_median_composite(
 
     # Dividing the bands to the SCL band and the rest to facilitate performing cloud mask operations
     scl_band = "SCL"
-    analysis_bands = [band for band in config.ASSET_KEYS if band != scl_band]
+    analysis_bands = [band for band in config.DEFORESTATION_ASSET_KEYS if band != scl_band]
 
     # Creating a cloud mask
     cloud_mask = stack.sel(band=scl_band).isin(config.CLOUD_AND_SHADOW_CLASSES)
