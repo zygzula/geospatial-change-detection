@@ -145,7 +145,7 @@ This pipeline improves reliability by combining:
 ## 📁 Project Structure
 
 ```text
-qgis-python-miniproject/
+geospatial-change-detection/
 ├── data/
 │   └── raw/                    # AOIs (GeoJSON)
 ├── outputs/
