@@ -50,7 +50,7 @@ def calculate_nbr_change(
     # Aligning both NDVI DataArrays to ensure that only the parts where both DataArrays have values are processed
     p1_nbr_aligned, p2_nbr_aligned = xr.align(p1_nbr, p2_nbr, join="inner")
 
-    nbr_change = p2_nbr_aligned - p1_nbr_aligned
+    nbr_change = p1_nbr_aligned - p2_nbr_aligned
     nbr_change = nbr_change.rename("nbr_change")
 
     print("NBR change calculation complete.")

@@ -24,7 +24,6 @@ data/processed/*
 !data/processed/.gitkeep
 
 # outputs
-outputs/figures/*
 outputs/vectors/*
 outputs/reports/*
 outputs/rasters/*

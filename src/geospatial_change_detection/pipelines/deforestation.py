@@ -152,8 +152,9 @@ def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_DEFOR
     visualize.save_hotspot_overlay_plot(
         raster=ndvi_diff,
         hotspots=hotspots_clean,
-        filepath=config.FIGURES_DIR / "hotspot_overlay.png",
+        filepath=config.FIGURES_DIR / "deforestation_hotspot_overlay.png",
         title="Deforestation Hotspots on NDVI Change",
+        label="Hotspots: NDVI decrease below threshold"
     )
 
     print("\nPipeline execution complete.")

@@ -59,7 +59,7 @@ def _process_period(
     visualize.save_raster_plot(
         raster=nbr,
         filepath=config.FIGURES_DIR / f"{filename}.png",
-        title=f"NBR for Rondônia, Brazil ({start} to {end})",
+        title=f"NBR for California, USA ({start} to {end})",
         cmap=config.NBR_CMAP,
         verbose=verbose
     )
@@ -107,7 +107,7 @@ def run_burnt_area_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_BURNT_AR
         verbose=verbose
     )
 
-    print("\nPerforming vegetation loss detection")
+    print("\nPerforming burnt areas detection")
 
     nbr_diff = change.calculate_nbr_change(p1_nbr=p1_nbr, p2_nbr=p2_nbr, verbose=verbose)
     burnt_area_hotspot_mask = change.detect_burnt_area(p1_nbr=p1_nbr, nbr_diff=nbr_diff, verbose=verbose)
@@ -121,7 +121,7 @@ def run_burnt_area_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_BURNT_AR
     visualize.save_raster_plot(
         raster=nbr_diff,
         filepath=config.FIGURES_DIR / "nbr_change.png",
-        title=f"NBR Change for Rondônia, Brazil (Period 2 - Period 1)",
+        title=f"NBR Change for California, USA (Period 2 - Period 1)",
         cmap=config.NBR_CHANGE_CMAP
     )
 
@@ -154,6 +154,7 @@ def run_burnt_area_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_BURNT_AR
         hotspots=hotspots_clean,
         filepath=config.FIGURES_DIR / "burnt_area_hotspot_overlay.png",
         title="Burnt Area Hotspots on NBR Change",
+        label="Hotspots: NDR decrease below threshold"
     )
 
     print("\nPipeline execution complete.")
