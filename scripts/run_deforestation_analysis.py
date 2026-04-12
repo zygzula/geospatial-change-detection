@@ -10,7 +10,7 @@ project_root = Path(__file__).resolve().parent.parent
 src_path = project_root / "src"
 sys.path.insert(0, str(src_path))
 
-from qgis_python_miniproject.pipelines.deforestation import run_deforestation_pipeline
+from geospatial_change_detection.pipelines.deforestation import run_deforestation_pipeline
 
 if __name__ == "__main__":
     run_deforestation_pipeline()

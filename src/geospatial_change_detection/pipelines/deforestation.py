@@ -4,11 +4,11 @@ from typing import Union
 import xarray as xr
 from numpy import ndarray, dtype, float64
 
-from qgis_python_miniproject import config
-from qgis_python_miniproject.core import visualize, vectorize, aoi, fetch, composite, filesystem
-from qgis_python_miniproject.indices import change
-from qgis_python_miniproject.reports import summarize
-from qgis_python_miniproject.indices.ndvi import calculate_ndvi
+from geospatial_change_detection import config
+from geospatial_change_detection.core import visualize, vectorize, aoi, fetch, composite, filesystem
+from geospatial_change_detection.indices import change
+from geospatial_change_detection.reports import summarize
+from geospatial_change_detection.indices.ndvi import calculate_ndvi
 
 
 def _process_period(
@@ -67,7 +67,7 @@ def _process_period(
     return ndvi
 
 
-def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_AOI_PATH, verbose: bool = config.VERBOSE):
+def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_DEFORESTATION_AOI_PATH, verbose: bool = config.VERBOSE):
     """
     Executes the full deforestation pipeline. By default, the analysis is performed on the Rondônia region in Brazil,
     a well-documented deforestation hotspot in the Amazon over recent decades.
@@ -87,8 +87,8 @@ def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_AOI_P
 
     # Processing NDVI for periods 1 and 2
     p1_ndvi = _process_period(
-        start=config.PERIOD_1_START,
-        end=config.PERIOD_1_END,
+        start=config.DEFORESTATION_PERIOD_1_START,
+        end=config.DEFORESTATION_PERIOD_1_END,
         bounds_wgs84=bounds_wgs84,
         bounds_target_crs=bounds_target_crs,
         target_crs=target_crs,
@@ -97,8 +97,8 @@ def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_AOI_P
         verbose=verbose
     )
     p2_ndvi = _process_period(
-        start=config.PERIOD_2_START,
-        end=config.PERIOD_2_END,
+        start=config.DEFORESTATION_PERIOD_2_START,
+        end=config.DEFORESTATION_PERIOD_2_END,
         bounds_wgs84=bounds_wgs84,
         bounds_target_crs=bounds_target_crs,
         target_crs=target_crs,
@@ -152,8 +152,9 @@ def run_deforestation_pipeline(aoi_path: Union[str, Path] = config.DEFAULT_AOI_P
     visualize.save_hotspot_overlay_plot(
         raster=ndvi_diff,
         hotspots=hotspots_clean,
-        filepath=config.FIGURES_DIR / "hotspot_overlay.png",
+        filepath=config.FIGURES_DIR / "deforestation_hotspot_overlay.png",
         title="Deforestation Hotspots on NDVI Change",
+        label="Hotspots: NDVI decrease below threshold"
     )
 
     print("\nPipeline execution complete.")

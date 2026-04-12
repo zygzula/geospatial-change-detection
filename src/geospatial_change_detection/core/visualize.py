@@ -1,4 +1,5 @@
 from typing import Literal
+from matplotlib.ticker import FuncFormatter
 
 import matplotlib
 from matplotlib.figure import Figure
@@ -11,7 +12,7 @@ import xarray as xr
 import geopandas as gpd
 from pathlib import Path
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def _visualise_the_plot(
@@ -28,6 +29,8 @@ def _visualise_the_plot(
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_aspect(aspect)
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x / 1000:.0f} km"))
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y / 1000:.0f} km"))
     plt.tight_layout()
     fig.savefig(filepath, dpi=config.FIG_DPI)
     plt.close(fig)
@@ -68,7 +71,8 @@ def save_hotspot_overlay_plot(
         hotspots: gpd.GeoDataFrame,
         filepath: Path,
         title: str,
-        raster_cmap: str = "gray",
+        label: str,
+        raster_cmap: str = "RdYlGn",
 ):
     """
     Saves a plot of hotspot polygons overlaid on a raster.
@@ -81,6 +85,16 @@ def save_hotspot_overlay_plot(
     # Plotting the hotspot polygons over the raster if they exist
     if not hotspots.empty:
         hotspots.plot(ax=ax, facecolor="none", edgecolor="red", linewidth=1.5)
+
+    ax.text(
+        0.01,
+        0.01,
+        label,
+        transform=ax.transAxes,
+        fontsize=10,
+        color="white",
+        bbox=dict(facecolor="black", alpha=0.6)
+    )
 
     _visualise_the_plot(
         ax=ax,

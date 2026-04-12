@@ -3,7 +3,7 @@ import xarray as xr
 from rasterio import features
 from shapely.geometry import shape
 
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def vectorize_raster(

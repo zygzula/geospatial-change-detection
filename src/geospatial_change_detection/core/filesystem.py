@@ -1,4 +1,4 @@
-from qgis_python_miniproject import config
+from geospatial_change_detection import config
 
 
 def create_output_directories(verbose: bool = config.VERBOSE):
